@@ -1,4 +1,5 @@
 import { createClient, TimeSeriesAggregationType } from "redis";
+import { promisify } from "util";
 
 
 class RedisClient {
@@ -7,30 +8,29 @@ class RedisClient {
 		this.redisClient.on("error", (error) => {
 			console.log(error);
 		})
-		this.redisClient.connect();
+		this.connected = false;
+		this.redisClient.on("connect", () => {
+			this.connected = true;
+		});
 	}
 
 	isAlive() {
-		if (this.redisClient.on("connect", () => {
-			return true;
-		})) {
-			return true;
-		} else {
-			return false;
-		};
+		return this.connected;
 	}
 
 	async get(key) {
-		let value = await this.redisClient.get(key);
-		return value;
+		let promise_get = promisify(this.redisClient.get).bind(this.redisClient);
+		return await promise_get(key);
 	}
 
 	async set(key, value, expr) {
-		await this.redisClient.setEx(key, expr, String(value));
+		let promise_set = promisify(this.redisClient.setEx).bind(this.redisClient);
+		await promise_set(key, expr, String(value));
 	}
 
 	async del(key) {
-		await this.redisClient.del(key);
+		let promise_del = promisify(this.redisClient.del).bind(this.redisClient);
+		await promise_del(key);
 	}
 }
 
