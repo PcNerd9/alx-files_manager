@@ -24,8 +24,8 @@ class RedisClient {
 	}
 
 	async set(key, value, expr) {
-		let promise_set = promisify(this.redisClient.setEx).bind(this.redisClient);
-		await promise_set(key, expr, String(value));
+		let promise_set = promisify(this.redisClient.set).bind(this.redisClient);
+		await promise_set(key, value, "Ex", expr);
 	}
 
 	async del(key) {
