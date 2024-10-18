@@ -1,3 +1,3 @@
-import redisClient from "./utils/redis.js";
+import dbClient from "./utils/db.js";
 
-console.log(redisClient.get("myKey"));
+console.log(await dbClient.nbUsers());
