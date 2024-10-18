@@ -8,8 +8,8 @@ class DBClient {
         const url = `mongodb://${host}:${port}/${this.database}`;
         this.client = new MongoClient(url) 
         this.connected = false;
-        this.client.on("connect", () => {
-            this.connected  = true;
+        this.client.connect().then(() => {
+            this.connected = true;
         })
     }
     isAlive() {
